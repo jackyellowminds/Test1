@@ -1,0 +1,219 @@
+<div *ngIf="errorMessage" class="alert alert-danger alert-dismissible" data-auto-dismiss="2000" data-auto-dismiss
+    role="alert">
+    {{errorMessage}}
+</div>
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible" data-auto-dismiss="2000" data-auto-dismiss
+    role="alert">
+    {{message}}
+</div>
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-10">
+                <h4>Manage Orders</h4>
+            </div>
+            <div class="col-md-2 text-right">
+                <!-- <button (click)="showModal()" class="btn btn-primary btn-primary w-100">Add New</button> -->
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Order No</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Table</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let val of orderList">
+
+                    <td>{{val.orderId}}</td>
+                    <td>{{val.user}}</td>
+                    <td>{{val.dateTime | date:'dd-MMM-yyyy hh:mm:a'}}</td>
+                    <td>{{val.tableNumber}}</td>
+                    <td>
+                        <button (click)="edit(val)" class="btn btn-sm btn-warning">Edit </button>
+                        <span style="width: 30px;"></span>
+                        <button (click)="delete(val)" class="btn btn-sm btn-danger pl-3">Delete </button>
+                        <button (click)="print(val)" class="btn btn-sm btn-success pl-3">Print </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+<div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div data-backdrop="static" tabindex="-1" role="dialog" class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="exampleModalLabel">Order # {{selectedOrderNo}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="itemForm" (ngSubmit)="addToList()">
+          <input type="hidden" formControlName="Price">
+          <input type="hidden" formControlName="RTableId">
+          <input type="hidden" formControlName="ReservationId">
+          <input type="hidden" formControlName="OrderId">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Menu Item</label>
+                <!-- <select  (change)="changeMenu($event)" [(ngModel)]="selectedMenuMD" class="form-control" formControlName="MenuId">
+                    <option value="0">Select Value</option>
+                    <option *ngFor="let val of menuList" Value="val.menuId">
+                  {{ val.itemName }}
+                </option>
+              </select> -->
+                <ng-select [items]="menuList" bindLabel="itemName" autofocus (change)="changeMenu()" 
+                  formControlName="MenuId" [(ngModel)]="selectedMenuMD">
+                </ng-select>
+                <div
+                  *ngIf="itemForm.controls['MenuId'].invalid && (itemForm.controls['MenuId'].dirty || itemForm.controls['MenuId'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['MenuId'].errors">
+                    <span class="text-danger">Please Enter Item Name.</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" formControlName="Quantity" [(ngModel)]="accountModal.Quantity" class="form-control"
+                  id="Quantity" placeholder="Quantity">
+                <div
+                  *ngIf="itemForm.controls['Quantity'].invalid && (itemForm.controls['Quantity'].dirty || itemForm.controls['Quantity'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['Quantity'].errors">
+                    <span class="text-danger">Please Enter Price .</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label style="color: white;">A</label>
+              <button class="btn btn-danger w-100">Add</button>
+            </div>
+          </div>
+        </form>
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Item Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+              <th scope="col">Action</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let val of cartList">
+
+              <td>{{val.itemName}}</td>
+              <td>{{val.quantity}}</td>
+              <td>{{val.price}}</td>
+              <!-- <td>
+                <button (click)="edit(val)" class="btn btn-sm btn-warning">Edit </button>
+               
+              </td> -->
+            </tr>
+
+          </tbody>
+        </table>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit" (click)="saveOrder()" class="btn btn-primary">
+            Save Order
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- print model -->
+<div class="modal fade bd-example-modal-lg" id="printModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div data-backdrop="static" tabindex="-1" role="dialog" class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="exampleModalLabel">Print</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngFor="let d of orderList2">
+          <div class="row">
+            <div class="col-md-3"> <strong>To</strong> </div>
+              <div class="col-md-9">{{d.user}}</div>
+          </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Order#</strong> </div>
+            <div class="col-md-9">{{d.orderId}}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Date</strong> </div>
+            <div class="col-md-9">{{d.dateTime| date: 'dd-MMM-yyyy hh:mm:a'}}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Table No</strong> </div>
+            <div class="col-md-9">{{d.rTableId}}</div>
+        </div>
+      </div>
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Item Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+           
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of cartList2">
+
+              <td>{{d.itemName}}</td>
+              <td>{{d.quantity}}</td>
+              <td>{{d.price}}</td>
+              
+            </tr>
+
+          </tbody>
+        </table>
+        
+        <div *ngFor="let d of orderList2">
+        <div class="row float-right text-right">
+          <div class="col-md-3"> <strong>Total Amount</strong> </div>
+            <div class="col-md-9 text-right">{{d.totalAmount | number}}</div>
+        </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button type="submit"  class="btn btn-primary">
+            Print
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

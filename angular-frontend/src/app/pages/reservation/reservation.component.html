@@ -1,0 +1,231 @@
+<div *ngIf="errorMessage" class="alert alert-danger alert-dismissible" data-auto-dismiss="2000" data-auto-dismiss
+  role="alert">
+  {{errorMessage}}
+</div>
+<div *ngIf="successMessage" class="alert alert-success alert-dismissible" data-auto-dismiss="2000" data-auto-dismiss
+  role="alert">
+  {{message}}
+</div>
+
+<div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div data-backdrop="static" tabindex="-1" role="dialog" class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+
+        <h5 class="modal-title" id="exampleModalLabel">Booking of {{tableNumber}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div *ngFor="let d of orderList">
+          <div class="row">
+            <div class="col-md-3"> <strong>To</strong> </div>
+              <div class="col-md-9">{{d.user}}</div>
+          </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Order#</strong> </div>
+            <div class="col-md-9">{{d.orderId}}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Date</strong> </div>
+            <div class="col-md-9">{{d.dateTime| date: 'dd-MMM-yyyy hh:mm:a'}}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-3"> <strong>Table No</strong> </div>
+            <div class="col-md-9">{{d.rTableId}}</div>
+        </div>
+      </div>
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Item Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+          
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let val of cartList">
+
+              <td>{{val.itemName}}</td>
+              <td>{{val.quantity}}</td>
+              <td>{{val.price}}</td>
+            
+            </tr>
+
+          </tbody>
+        </table>
+        
+        <div *ngFor="let d of orderList">
+        <div class="row">
+          <div class="col-md-3"> <strong>Total Amount</strong> </div>
+            <div class="col-md-9">{{d.totalAmount | number}}</div>
+        </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+       
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-2">
+    <div class="card">
+      <div class="card-header">
+        <h6>Recent Reservations</h6>
+      </div>
+      <div class="card-body">
+        <ul class="list-group">
+          <li *ngFor="let val of recentReservationList" class="list-group-item">
+            <h6>{{val.tableNumber}}</h6>  
+            <p>{{val.user}}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="row">
+      <ng-container *ngFor="let x of tableList; let i = index">
+        <div class="col-md-3 mt-2">
+          <div (click)="addMeal(x)" class="card" [style.background]="x.status ? 'yellow':'white'">
+            <div class="card-body text-center">
+              <h6> {{ x.tableNumber }}</h6>
+              <p class="small text-muted">Capacity: {{x.capacity}}</p>
+            </div>
+          </div>
+    
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card" *ngIf="tableNumber">
+      <div class="card-header">
+        <h6>Booking of {{tableNumber}}</h6>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="itemForm" (ngSubmit)="addToList()">
+          <input type="hidden" formControlName="Price">
+          <input type="hidden" formControlName="RTableId">
+          <input type="hidden" formControlName="ReservationId">
+          <input type="hidden"formControlName="UserNo" >
+          <div class="row">
+            <div class="form-group mt-2">
+              <label>Add Person</label>
+              <input type="number"  (input)="onChangeCapacity($event)" formControlName="UserCapacity" [(ngModel)]="accountModal.UserCapacity" class="form-control"
+                id="UserCapacity" placeholder="Add Persons">
+                <div   *ngIf="itemForm.controls['UserCapacity'].invalid && (itemForm.controls['UserCapacity'].dirty || itemForm.controls['UserCapacity'].touched)"
+                class="ng-dirty">
+                <span *ngIf="itemForm.controls['UserCapacity'].errors">
+                  <span class="text-danger">Please Enter.</span>
+                </span>
+              </div>
+        
+            </div>
+          </div>
+          <div *ngIf="isValidPerson" class="row mt-3">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Menu Item</label>
+                <!-- <select  (change)="changeMenu($event)" [(ngModel)]="selectedMenuMD" class="form-control" formControlName="MenuId">
+                    <option value="0">Select Value</option>
+                    <option *ngFor="let val of menuList" Value="val.menuId">
+                  {{ val.itemName }}
+                </option>
+              </select> -->
+                <ng-select [items]="menuList" bindLabel="itemName" autofocus (change)="changeMenu()" bindValue="menuId"
+                  formControlName="MenuId" [(ngModel)]="selectedMenuMD">
+                </ng-select>
+                <div   *ngIf="itemForm.controls['MenuId'].invalid && (itemForm.controls['MenuId'].dirty || itemForm.controls['MenuId'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['MenuId'].errors">
+                    <span class="text-danger">Please Enter Item Name.</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Quantity</label>
+                <input type="number" formControlName="Quantity" [(ngModel)]="accountModal.Quantity" class="form-control"
+                  id="Quantity" placeholder="Quantity">
+                <div
+                  *ngIf="itemForm.controls['Quantity'].invalid && (itemForm.controls['Quantity'].dirty || itemForm.controls['Quantity'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['Quantity'].errors">
+                    <span class="text-danger">Please Enter Price .</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label style="color: white;">A</label>
+              <button class="btn btn-danger w-100">Add</button>
+            </div>
+          </div>
+        </form>
+        <table *ngIf="isValidPerson" class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Item Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+              <th scope="col">Action</th>
+    
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let val of reservationList">
+    
+              <td>{{val.itemName}}</td>
+              <td>{{val.quantity}}</td>
+              <td>{{val.price}}</td>
+              <td>
+                <button (click)="edit(val)" class="btn btn-sm btn-warning">Edit </button>
+                <button (click)="delete(val)" class="btn btn-sm btn-danger pl-3">Delete </button>
+              </td>
+            </tr>
+    
+          </tbody>
+        </table>
+    
+        <div *ngIf="isValidPerson" class="text-center float-center">  
+          <div class="row">
+            <div class="col-md-3">
+              <button type="button" (click)="saveOrder()" class="btn btn-primary w-100">
+                Save Order
+              </button>
+            </div>
+          
+            <div class="col-md-3">
+              <button *ngIf="isAdmin=='User'" type="button" (click)="cancelReservation()" class="btn btn-danger  w-100">
+                Cancel
+              </button>
+              <button *ngIf="isAdmin=='Admin'" type="button" (click)="cancelReservationAdmin()" class="btn btn-danger  w-100">
+                Cancel
+              </button>
+            </div>
+            <div class="col-md-2"></div>
+            <div class="col-md-3">
+              <button type="button" (click)="reserveTable()" class="btn btn-success  w-100">
+                Reserve
+              </button>
+            </div>
+          </div>   
+         
+        
+        </div>
+      </div>
+    </div>
+  
+  </div>
+</div>

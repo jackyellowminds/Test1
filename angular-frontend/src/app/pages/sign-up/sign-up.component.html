@@ -1,0 +1,69 @@
+<div class="vh-100 d-flex justify-content-center align-items-center">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+          <div class="border border-3 border-primary"></div>
+          <div class="card bg-white">
+            <div class="card-body p-5">
+              <form class="mb-3 mt-md-4" [formGroup]="itemForm" (ngSubmit)="onRegister()">
+                <h2 class="fw-bold mb-2 text-uppercase ">Online Booking App</h2>
+                <p class=" mb-5">Please enter your details here</p>
+                <div class="mb-3">
+                    <label for="email" class="form-label ">First Name</label>
+                    <input type="text" name ="FirstName"formControlName="FirstName" [(ngModel)]="formModel.FirstName" class="form-control" id="FirstName" placeholder="First Name">
+                    <div *ngIf="itemForm.controls['FirstName'].invalid && (itemForm.controls['Email'].dirty || itemForm.controls['FirstName'].touched)"
+                    class="ng-dirty">
+                    <span *ngIf="itemForm.controls['FirstName'].errors">
+                      <span class="text-danger">Please Enter First Name .</span>
+                    </span>
+                  </div>
+                  </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label ">Last Name</label>
+                    <input type="text" name ="Password"formControlName="LastName" [(ngModel)]="formModel.LastName" class="form-control" id="LastName" placeholder="Last Name">
+                    <div *ngIf="itemForm.controls['LastName'].invalid && (itemForm.controls['Email'].dirty || itemForm.controls['LastName'].touched)"
+                    class="ng-dirty">
+                    <span *ngIf="itemForm.controls['LastName'].errors">
+                      <span class="text-danger">Please Enter LastName .</span>
+                    </span>
+                  </div>
+                  </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label ">Email address</label>
+                  <input type="email" name ="Password"formControlName="Email" [(ngModel)]="formModel.Email" class="form-control" id="email" placeholder="name@example.com">
+                  <div *ngIf="itemForm.controls['Email'].invalid && (itemForm.controls['Email'].dirty || itemForm.controls['Email'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['Email'].errors">
+                    <span class="text-danger">Please Enter Email .</span>
+                  </span>
+                </div>
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label ">Password</label>
+                  <input type="password" name="Password"  formControlName="Password" [(ngModel)]="formModel.Password" class="form-control" id="password" placeholder="*******">
+                  <div *ngIf="itemForm.controls['Password'].invalid && (itemForm.controls['Password'].dirty || itemForm.controls['Password'].touched)"
+                  class="ng-dirty">
+                  <span *ngIf="itemForm.controls['Password'].errors">
+                    <span class="text-danger">Please Enter Password .</span>
+                  </span>
+                </div>
+                </div>
+              
+                <div class="d-grid">
+                  <button class="btn btn-outline-dark" type="submit">Submit</button>
+                </div>
+              </form>
+              <div>
+                <p class="mb-0  text-center"> <a (click)="signIn()"
+                    class="text-primary fw-bold">Go to 
+                    Login</a></p>
+              </div>
+              <div *ngIf="showMessage" class="alert alert-success" role="alert">
+                {{responseMessage}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
